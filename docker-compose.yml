@@ -1,0 +1,28 @@
+version: '3.2'
+
+services:
+ liquid_brain:
+   build:
+     context: .
+   ports:
+     - "${DOCKER_PORT}:${DOCKER_PORT}"
+   volumes:
+     - ./liquid_brain:/liquid_brain
+   command: >
+     sh -c "pipenv run manage.py wait_for_db &&
+            pipenv run manage.py migrate &&
+            pipenv run manage.py runserver ${DOCKER_IP}:${DOCKER_PORT}"
+   environment:
+     - DB_HOST=db
+     - DB_NAME=${DB_NAME}
+     - DB_USER=${DB_USER}
+     - DB_PASS=${DB_PASSWORD}
+   depends_on:
+     - db
+
+ db:
+   image: postgres:12-alpine
+   environment:
+     - POSTGRES_DB=${DB_NAME}
+     - POSTGRES_USER=${DB_USER}
+     - POSTGRES_PASSWORD=${DB_PASSWORD}

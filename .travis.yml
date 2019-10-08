@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.6"
+
+services:
+  - docker
+
+before_script: pip install docker-compose pipenv
+
+script:
+  - docker-compose run liquid_brain sh -c "pipenv manage.py test && flake8"
